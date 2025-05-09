@@ -1,0 +1,4 @@
+Aplicacion desarrollada en MatLab que permite la descarga de datos del Osciloscopio Tektronix TDS360
+
+
+Para usar la aplicacion, debera ejecutarla desde el menu de inicio. Aparecera al buscar 'OSC01'

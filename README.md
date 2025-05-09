@@ -1,4 +1,4 @@
-<h1 align="center">OSC01 - TDS360<br/><br/>
+<h1 align="center">Celda de Carga<br/><br/>
 <div align="center">
 <img src="assets/images/leme.svg" style="max-width: 100%" width=200><br/>
 <br/>
