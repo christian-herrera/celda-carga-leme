@@ -6,9 +6,7 @@
 bool checkCommand();
 void processCommand(EstadoSistema &maqEstados);
 
-
-void blinkLed();
-
+void blinkLed(byte veces, int ms);
 
 float descomponerValor(char * str);
 

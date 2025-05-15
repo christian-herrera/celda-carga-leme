@@ -1,34 +1,19 @@
 <div style="font-family: sans-serif; font-size: 14px;">
-<h3>Adquisidor para Tektronix TDS360</h3>
-<h4>conexión Serial</h4>
-<p>Esta aplicación permite conectarse por comunicación serial únicamente al modelo de Osciloscopio TDS360. Una vez realizada la conexión se procederá a presionar el botón <b>Leer Valores</b>.</p>
-<p>Esto descarga la totalidad de las muestras disponibles para cada canal.</p>
-<h4>Descarga de Valores</h4>
-<p>Una vez que se leyeron todos los valores, no necesariamente ambos canales al mismo tiempo, es posible descargar los datos en formato legible por MatLab (.MAT). La estructura de los valores tendrá la forma:</p>
-<ul>
-   <li><b>dt</b>: Es el valor del tiempo entre muestras.</li>
-   <li><b>offset_t</b>: Es el desplazamiento que se realiza en el vector tiempo.</li>
-   <li><b>ch1</b>: Contiene los datos del canal 1.</li>
-   <ul>
-      <li><b>ch1.raw</b>: Contiene los valores RAW que se leyeron del Osciloscopio.</li>
-      <li><b>ch1.ymult</b>: Es el factor por el cual se deberá multiplicar la muestra.</li>
-      <li><b>ch1.yoff</b>: Es el valor que se le deberá restar al valor RAW leído (antes de usar el multiplicador).</li>
-      <li><b>ch1.yzero</b>: Es el valor que se deberá sumar al valor de tensión final.</li>
-      <li><b>ch1.titulo</b>: Corresponde al Título que se le deja a la gráfica.</li>
-      <li><b>ch1.leyenda</b>: Corresponde a la leyenda que se le deja al eje vertical.</li>
-   </ul>
-   <li><b>ch2</b>: Misma situación que con ch1</li>
-</ul>
-<p>Estos campos estarán dentro del archivo .MAT. La manera de utilizarlos para graficar es con las siguientes expresiones:</p>
-</div>
-
-
-<!-- VA LA IMAGEN DE LOS VECTORES -->
-
-
-
-<div style="font-family: sans-serif; font-size: 14px;">
-<h4>Carga de Archivo .MAT</h4>
-<p>El proceso inverso consta de elegir un archivo .MAT, de esta forma primero se comprueba que todas las variables que previamente se nombraron, existan en el archivo</p>
-<p>Finalmente, se cargan en los lugares correspondientes y luego se realiza la gráfica</p>
+    <h3>App para Celda de Carga</h3>
+    <h4>Conexión Serial</h4>
+    <p>Esta aplicación permite conectarse por comunicación serial únicamente al modelo especifico del modulo para la cual se diseñó. Una vez establecida la conexión se puede realizar alguna de las siguientes operaciones:</p>
+    <ul>
+        <li>Se permite cofigurar el valor de <b>Constante de Calibración</b>. Este valor se usa para establecer el factor con el cual se ajusta la curva de la balanza.</li>
+        <li>Se permite cofigurar el valor de <b>Peso Conocido</b>.</li>
+        <li>Se puede descargar los valores anteriores usando los botones correspondientes.</li>
+        <li>Se permite iniciar el proceso de <b>Calibración Automática</b>. Este proceso permite calcular en el Arduino, la constate correspondiente para un <i>Peso Conocido</i></li>
+        <li>Se permite iniciar la recolección de los valores de forma continua. A medida que llegan se cargan en el gráfico y se muestra en los demas campos.</li>
+    </ul>
+    <p>Al momento de exportar, se tienen 4 variables:</p>
+    <ul>
+        <li><code>param.peso_conocido</code>: Valor en KG del peso usado para la constante de calibración.</li>
+        <li><code>param.cte_calib</code>: Constante asociada a la variable anterior.</li>
+        <li><code>data_time</code>: Vector tiempo, expresado en segundos.</li>
+        <li><code>data_kg</code>: Vector de muestras de peso, expresado en Kg</li>
+    </ul>
 </div>

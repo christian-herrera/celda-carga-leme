@@ -12,7 +12,7 @@ MiDataVar data;
 
 
 float getSinFromMillis(unsigned long t) {
-  return 50.0 * sin(2 * PI * t / 5000.0) + 150;
+  return 200.0 * sin(2 * PI * t / 10000.0) + 30.0 * sin(2 * PI * t / 1050.0) + 150;
 }
 
 
@@ -28,9 +28,6 @@ void setup() {
 
   EEPROM.get(EEPROM_DIR_PESO_CAL, data.peso_conocido);
   EEPROM.get(EEPROM_DIR_CTE_CAL, data.cte_calibracion);
-  Serial.println("[DEBUG] Sistema inicializado!");
-  Serial.println("[DEBUG] cte_calibracion: [" + String(data.cte_calibracion) + "]");
-  Serial.println("[DEBUG] peso_conocido: [" + String(data.peso_conocido) + "]");
 }
 
 /*
@@ -47,37 +44,66 @@ void loop() {
     case IDLE:
       break;
 
+    /*
+     * En este estado, envia cada un cierto tiempo los valores que
+     * devuelve la libreria de la celda de carga. Se puede colocar
+     * con promedios o con una unica muestra.
+     */
     case READING:
-      //Serial.println(String(loadcell.get_units(1), 4) + " kg");
-      //Serial.println("#" + String(loadcell.get_units(1), 4) + "&");
-      Serial.print("#kg$" + String(getSinFromMillis(millis()), 2) + "&\r");
-      delay(100);
+      // ─────────────────────────────────────── LECTURA EN KG DE LA CELDA ──
+      //Serial.println("#kg$" + String(loadcell.get_units(1), 4) + "&\r");   // A Implementar
+      Serial.print("#kg$" + String(getSinFromMillis(millis()), 2) + "&\r");  // ELIMINAR...
+      // ────────────────────────────────────────────────────────────────────
+
+#if MS_BETWEEN_READ != 0
+      delay(MS_BETWEEN_READ);
+#endif
+
       break;
 
+
+    /*
+     * En este testado, realiza la funcion "Tara" para fijar el offset
+     * de la medicion. La libreria implementa esto con un metodo.
+     */
     case SET_TARE:
-      // loadcell.set_scale(data.cte_calibracion);
-      // loadcell.tare(5);
-      maqEstados = IDLE;
-      // data.rawKG = loadcell.get_units(1);
+      // ────────────────────────────────────────────────── APLICO LA TARA ──
+      // loadcell.set_scale(data.cte_calibracion);        // A implementar
+      // loadcell.tare(5);                                // A implementar
+      // ────────────────────────────────────────────────────────────────────
       Serial.println("#tare-ok&\r");
-      blinkLed();
+      maqEstados = IDLE;
+      blinkLed(10, 100);
       break;
 
 
+    /*
+     * En este estado, se obtiene en base a un peso conocido, el valor
+     * de la constante de calibración. Envia paquetes de estados a la app
+     * para seguir el proceso con la aplicacion.
+     */
     case DO_CALIBRATION:
       Serial.print("#cal-process&\r");
-      // loadcell.set_scale();
-      // loadcell.tare();
+      // ───────────────────────────────────────────── EJECUCIONES PREVIAS ──
+      // loadcell.set_scale();    // A implementar
+      // loadcell.tare();         // A implementar
+      // ────────────────────────────────────────────────────────────────────
       delay(1000);
-      for (byte i = 0; i < 100; i+=5) {
+      for (byte i = 0; i < 100; i += 5) {
         Serial.print("#cal-time$" + String(i) + "&\r");
-        delay(1000);
+        blinkLed(10, 100);
       }
       Serial.print("#cal-init&\r");
-      // data.cte_calibracion = loadcell.get_units(20) / data.peso_conocido;
-      // loadcell.set_scale(data.cte_calibracion);
+      digitalWrite(LED_GREEN, 1);
+      // ──────────────────────────────────────────────── CALIBRACIÓN REAL ──
+      // data.cte_calibracion = loadcell.get_units(20) / data.peso_conocido;  // A implementar
+      // loadcell.set_scale(data.cte_calibracion);                            // A implementar
+      data.cte_calibracion = millis() / 100.0;               // ELIMINAR...
+      EEPROM.put(EEPROM_DIR_CTE_CAL, data.cte_calibracion);  // A implementar
+      // ────────────────────────────────────────────────────────────────────
       delay(2000);
       Serial.print("#cal-end&\r");
+      digitalWrite(LED_GREEN, 0);
       maqEstados = IDLE;
       break;
   }

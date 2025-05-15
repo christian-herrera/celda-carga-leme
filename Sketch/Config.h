@@ -3,6 +3,14 @@
 
 
 /*
+ * Valores para la version y demas
+ */
+#define AUTHOR "Christian Herrera"
+#define VERSION 1.0
+#define ID 20250515
+
+
+/*
  * Pines para el HX711
  */
 #define LOADCELL_DOUT_PIN 2
@@ -21,6 +29,12 @@
  */
 #define SERIAL_BAUDRATE 57600
 #define DIM_BUFFER 20
+
+
+/*
+ * Parametros de las lecturas
+ */
+#define MS_BETWEEN_READ 100
 
 
 /*

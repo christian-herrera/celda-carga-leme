@@ -7,9 +7,13 @@ extern MiDataVar data;
 extern char buffer[DIM_BUFFER];
 
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
 //                          Función: checkCommand()
-// ─────────────────────────────────────────────
+//
+// Permite procesar si existe un string en el puerto serie, lo recibe y
+// lo descompone. Este string debe terminar siempre con '\r'.
+// Se almacenará en la variable 'buffer', definida en el Sketch.ino.
+// ─────────────────────────────────────────────────────────────────────
 bool checkCommand() {
   int i = 0;
   char c;
@@ -32,20 +36,25 @@ bool checkCommand() {
   return i > 0;
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
 //           Función: processCommand(EstadoSistema &maqEstados)
-// ─────────────────────────────────────────────
+//
+// Una vez que tengo el comando, lo proceso. Verificando los caracteres
+// de inicio y de fin que deben ser '#' y '&' respectivamente.
+// Para aquellos comandos que debe llegar un valor float, se descompone
+// el string para obtener tal valor.
+// ─────────────────────────────────────────────────────────────────────
 void processCommand(EstadoSistema &maqEstados) {
   //Serial.println("[DEBUG] Recibido: [" + String(buffer) + "]");
 
-  // #check&  -> #ok&
+  // #check&  ->  #ok&
   if (strcmp(buffer, "#check&") == 0) {
-    Serial.print("#ok&\r");
+    Serial.print("#id$" + String(ID) + "&\r");
     return;
   }
 
 
-  // #get-cal-val& -> #cte-calib$xxxx.xx&
+  // #get-cal-val&  ->  #cte-calib$xxxx.xx&
   if (strcmp(buffer, "#get-cte-calib&") == 0) {
     Serial.print("#cte-calib$" + String(data.cte_calibracion, 2) + "&\r");
   }
@@ -55,7 +64,7 @@ void processCommand(EstadoSistema &maqEstados) {
     Serial.print("#weight$" + String(data.peso_conocido, 2) + "&\r");
   }
 
-  // #start&  -> #starting&
+  // #start&  ->  #starting&
   if (strcmp(buffer, "#start&") == 0) {
     digitalWrite(LED_GREEN, 1);
     Serial.print("#starting&\r");
@@ -64,7 +73,7 @@ void processCommand(EstadoSistema &maqEstados) {
     return;
   }
 
-  // #stop&  -> #stopping&
+  // #stop&  ->  #stopping&
   if (strcmp(buffer, "#stop&") == 0) {
     digitalWrite(LED_GREEN, 0);
     Serial.print("#stopping&\r");
@@ -72,14 +81,14 @@ void processCommand(EstadoSistema &maqEstados) {
     return;
   }
 
-  // #set-tare&  -> #tare-ok&
+  // #set-tare&  ->  #tare-ok&
   if (strcmp(buffer, "#set-tare&") == 0) {
     maqEstados = SET_TARE;
     return;
   }
 
 
-  // #set-weight$xxxxxx&  -> #saved-weight&
+  // #set-weight$xxxxxx&  ->  #saved-weight&
   if (strncmp(buffer, "#set-weight$", 12) == 0 && strchr(buffer, '&') != NULL) {
     data.peso_conocido = descomponerValor(buffer);
     EEPROM.put(EEPROM_DIR_PESO_CAL, data.peso_conocido);
@@ -100,7 +109,7 @@ void processCommand(EstadoSistema &maqEstados) {
 
 
 
-  // DO-CALIBRATION
+  // #do-auto-cal&  -> {Responde desde la maq. de estados}
   if (strcmp(buffer, "#do-auto-cal&") == 0) {
     maqEstados = DO_CALIBRATION;
     return;
@@ -109,20 +118,31 @@ void processCommand(EstadoSistema &maqEstados) {
 
 
 
-
-void blinkLed() {
-  for (int j = 0; j < 15; j++) {
+// ─────────────────────────────────────────────────────────────────────
+//              Funcion: blinkLed(byte veces, int ms)
+//
+// Hace un parpadeo que dura 'ms' milisegundos (mitad para el encendido
+// y la otra mitad para el apagado), y lo repite tantas veces como lo
+// indique el parámetro 'veces'.
+// ─────────────────────────────────────────────────────────────────────
+void blinkLed(byte veces, int ms) {
+  for (int j = 0; j < veces; j++) {
     digitalWrite(LED_GREEN, 1);
-    delay(100);
+    delay((int)ms/2);
     digitalWrite(LED_GREEN, 0);
-    delay(100);
+    delay((int)ms/2);
   }
 }
 
 
-
+// ─────────────────────────────────────────────────────────────────────
+//              Funcion: descomponerValor(char *str)
+//
+// Permite obtener el valor float que llega en un string que tiene la
+// estructura: '$xxxx.xx&'. Esta estructura se debe verificar antes de
+// que la funcion la procese.
+// ─────────────────────────────────────────────────────────────────────
 float descomponerValor(char *str) {
-  // Si llega el str, debe verificarse antes que exista el '$' y el '&'.
   char *initStr = strchr(str, '$') + 1;  // Toma la posicion del '$'
   char *endStr = strchr(str, '&');       // Toma la posicion del '&'
   *endStr = '\0';                        // En el lugar del '&' coloco el '\0'
