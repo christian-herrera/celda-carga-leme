@@ -12,7 +12,7 @@
 /*
  * Pines para los leds
  */
-#define LED_GREEN 5
+#define LED_GREEN 13
 
 
 
@@ -23,17 +23,31 @@
 #define DIM_BUFFER 20
 
 
+/*
+ * Memoria EEPROM
+ */
+#define EEPROM_DIR_PESO_CAL 0
+#define EEPROM_DIR_CTE_CAL  EEPROM_DIR_PESO_CAL + 4
+
+
 
 /*
  * Maquina de Estados
  */
 typedef enum {
   IDLE,
-  PRE_READING,
   READING,
   SET_TARE,
   DO_CALIBRATION
 } EstadoSistema;
+
+
+typedef struct {
+  float rawKG;
+  float peso_conocido;
+  float cte_calibracion;
+} MiDataVar;
+
 
 
 #endif

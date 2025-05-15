@@ -10,4 +10,8 @@ void processCommand(EstadoSistema &maqEstados);
 void blinkLed();
 
 
+float descomponerValor(char * str);
+
+
+
 #endif

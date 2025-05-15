@@ -1,8 +1,9 @@
 # Funciones de la Comunicación Serial
 ## Configuración del puerto
 ```matlab
-s = serialport("COM3", 9600);
-configureTerminator(s, "LF");
+s = serialport("COM3", 9600, "Timeout", 10);
+configureTerminator(s, "LF");       % '\n'
+configureTerminator(s, "CR");       % '\r'
 ```
 
 ## Limpieza de buffers
@@ -25,6 +26,7 @@ readbytes()					% Lee todos los bytes disponibles
 ```
 
 ## Enviar y Recibir
+Esta funcion envia el string `cmd1`, le adiciona el *terminator* configurado en la conexión, y espera la respuesta durante el *Timeout* configurado. Esta respuesta deberá tener el mismo *terminator*.
 ```matlab
-response = writeread(s, "cmd1")  % Envía y espera la respuesta
+response = writeread(s, "cmd1");
 ```
