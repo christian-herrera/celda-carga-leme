@@ -47,6 +47,7 @@ classdef utilidades
             try
                 % Envio el comando al serial
                 resp = writeread(serial, cmd);
+                % disp(resp);
 
                 val = utilidades.processRawData(resp, expectedResponse);
                 if isnan(val)

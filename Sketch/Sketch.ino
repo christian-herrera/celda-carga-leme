@@ -51,7 +51,7 @@ void loop() {
      */
     case READING:
       // ─────────────────────────────────────── LECTURA EN KG DE LA CELDA ──
-      //Serial.println("#kg$" + String(loadcell.get_units(1), 4) + "&\r");   // A Implementar
+      //Serial.println("#kg$" + String(loadcell.get_units(1), 2) + "&\r");   // A Implementar
       Serial.print("#kg$" + String(getSinFromMillis(millis()), 2) + "&\r");  // ELIMINAR...
       // ────────────────────────────────────────────────────────────────────
 
@@ -60,6 +60,23 @@ void loop() {
 #endif
 
       break;
+
+
+    /*
+     * En este estado, envía un único valor que será aquel que devuelve la
+     * libreria de la celda. Se puede configurar en el archivo Config.h
+     * si es una única lectura o un promedio de N lecturas.
+     */
+    case ONE_READ:
+      // ─────────────────────────────────────── LECTURA EN KG DE LA CELDA ──
+      //Serial.println("#kg$" + String(loadcell.get_units(NUM_READS_FOR_AVG), 2) + "&\r");   // A Implementar
+      Serial.print("#one-read$" + String(getSinFromMillis(millis()), 2) + "&\r");  // ELIMINAR...
+      // ────────────────────────────────────────────────────────────────────
+      maqEstados = IDLE;
+      break;
+
+
+
 
 
     /*

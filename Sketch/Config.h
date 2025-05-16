@@ -35,6 +35,7 @@
  * Parametros de las lecturas
  */
 #define MS_BETWEEN_READ 100
+#define NUM_READS_FOR_AVG 1
 
 
 /*
@@ -52,7 +53,8 @@ typedef enum {
   IDLE,
   READING,
   SET_TARE,
-  DO_CALIBRATION
+  DO_CALIBRATION,
+  ONE_READ
 } EstadoSistema;
 
 

@@ -53,6 +53,11 @@ void processCommand(EstadoSistema &maqEstados) {
     return;
   }
 
+  if (strcmp(buffer, "#get-one-read&") == 0) {
+    maqEstados = ONE_READ;
+    return;
+  }
+
 
   // #get-cal-val&  ->  #cte-calib$xxxx.xx&
   if (strcmp(buffer, "#get-cte-calib&") == 0) {
