@@ -1,5 +1,31 @@
-# Listado de las Funciones más Utiles
+# Métodos de la clase SerialPort (de MatLab)
+```matlab
+% Configuración del puerto
+s = serialport("COM3", 9600, "Timeout", 10);
+configureTerminator(s, "LF");       % '\n'
+configureTerminator(s, "CR");       % '\r'
 
+% Limpieza de buffers
+flush(app.serial.connection, "input");
+flush(app.serial.connection, "output");
+
+% Enviar datos
+write(s, "Hola", "string"); % Envía un string
+writeline(s, "LED ON");     % Envía con el terminador
+
+% Recibir datos
+data = read(s, 5, "uint8"); % Recibe uint8_t
+readline();                 % Recibe string
+readbytes();                % Lee todos los bytes disponibles
+
+% Enviar y esperar respuesta. Si se cumple el timeout configurado, lanza un error
+% capturable con try-catch
+response = writeread(s, "cmd1");
+```
+
+<br><br>
+
+# Métodos de la clase String.h (de leng. C)
 | Función      | Librería     | Descripción                                                            | Ejemplo de uso                         |
 | ------------ | ------------ | ---------------------------------------------------------------------- | -------------------------------------- |
 | `strlen()`   | `<string.h>` | Retorna la longitud de la cadena (sin contar el `\0`)                  | `int len = strlen(buffer);`            |
